@@ -1,5 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextPlugin from "@next/eslint-plugin-next";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const compat = new FlatCompat();
 
 const eslintConfig = defineConfig([
   globalIgnores([
@@ -8,15 +10,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
-  {
-    plugins: {
-      "@next/next": nextPlugin,
-    },
-    rules: {
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules,
-    },
-  },
+  ...compat.extends("next/core-web-vitals"),
 ]);
 
 export default eslintConfig;
