@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-let orders: any[] = [
+const orders: any[] = [
   {
     id: 'demo-1', orderNumber: 'PBM-250101-1234',
     customerName: 'Budi Santoso', phone: '08123456789',
@@ -13,16 +13,18 @@ let orders: any[] = [
   },
 ]
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const order = orders.find(o => o.id === params.id)
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params
+  const order = orders.find(o => o.id === id)
   if (!order) return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 })
   return NextResponse.json(order)
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await context.params
     const body = await req.json()
-    const index = orders.findIndex(o => o.id === params.id)
+    const index = orders.findIndex(o => o.id === id)
     if (index === -1) return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 })
     orders[index] = { ...orders[index], ...body, updatedAt: new Date().toISOString() }
     return NextResponse.json(orders[index])
@@ -31,8 +33,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const index = orders.findIndex(o => o.id === params.id)
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params
+  const index = orders.findIndex(o => o.id === id)
   if (index === -1) return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 })
   orders.splice(index, 1)
   return NextResponse.json({ success: true })
