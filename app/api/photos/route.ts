@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { put, del } from '@vercel/blob'
 
+export async function GET() {
+  return NextResponse.json([])
+}
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -8,15 +12,12 @@ export async function POST(req: NextRequest) {
     const orderId = (formData.get('orderId') as string) || 'manual'
     const type = (formData.get('type') as string) || 'pickup'
     const caption = (formData.get('caption') as string) || ''
-
     if (!file) {
       return NextResponse.json({ error: 'File tidak ditemukan' }, { status: 400 })
     }
-
     const blob = await put(`pickup-batam/${Date.now()}-${file.name}`, file, {
       access: 'public',
     })
-
     const photo = {
       id: `p${Date.now()}`,
       orderId,
@@ -25,7 +26,6 @@ export async function POST(req: NextRequest) {
       caption,
       createdAt: new Date().toISOString(),
     }
-
     return NextResponse.json(photo, { status: 201 })
   } catch (err) {
     console.error('Upload error:', err)
