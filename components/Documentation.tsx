@@ -19,9 +19,9 @@ export default function Documentation() {
   ]
 
   useEffect(() => {
-    fetch('/api/photos').then(r => r.json()).then(data => {
-      setPhotos([...demoPhotos, ...data])
-    }).catch(() => setPhotos(demoPhotos))
+fetch('/api/photos').then(r => r.json()).then(data => {
+  setPhotos(data.length > 0 ? data : demoPhotos)
+}).catch(() => setPhotos(demoPhotos))
   }, [])
 
   const filtered = filter === 'all' ? photos : photos.filter(p => p.type === filter)
