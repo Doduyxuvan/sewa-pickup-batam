@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { put, del } from '@vercel/blob'
+import { put, del, list } from '@vercel/blob'
 
 export async function GET() {
-  return NextResponse.json([])
+  try {
+    const { blobs } = await list({ prefix: 'pickup-batam/' })
+    const photos = blobs.map((blob) => ({
+      id: blob.pathname,
+      url: blob.url,
+      type: 'pickup',
+      caption: '',
+      orderId: '',
+      createdAt: blob.uploadedAt,
+    }))
+    return NextResponse.json(photos)
+  } catch (err) {
+    console.error('List error:', err)
+    return NextResponse.json([])
+  }
 }
 
 export async function POST(req: NextRequest) {
